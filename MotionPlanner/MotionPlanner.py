@@ -1,6 +1,7 @@
 from math import cos, sin
 import numpy as np
 import cv2
+import sys
 
 class MotionPlanner:
     VEHICLE_SIZE = 30
@@ -23,6 +24,7 @@ class MotionPlanner:
         X = A
         oldX = None
         STEP_SIZE = MotionPlanner.VEHICLE_SIZE
+        escapeDirection = 1
 
         while True:
             v = B - X
@@ -41,7 +43,7 @@ class MotionPlanner:
                     path.append(pos)
             
             if collidePos is not None:
-                escapePos = self.findEscapeAngle(path[-1], v_hat)
+                escapePos = self.findEscapeAngle(path[-1], v_hat, escapeDirection)
                 if escapePos is not None:
                     X = escapePos
                     path.append(escapePos)
@@ -52,20 +54,60 @@ class MotionPlanner:
                 break
 
             if np.linalg.norm(X-oldX) < 1:
-                print("Error: No progress")
-                break
+                print("Changing escape direction")
+                escapeDirection *= -1
+                # break
         
         path.append(B)
         return path
+
+    count = 0
+
+    def findPathRecursive(self, A, B, path, direction = 1):   
+        MotionPlanner.count += 1     
+
+        if MotionPlanner.count == 50:
+            print("MAX stack reached")
+            return 0
+
+        if np.linalg.norm(B-A) < 1:
+            return 0 # total distance
+
+        if len(path) > 3 and np.linalg.norm(path[-3]-A) < 1:     # running into loop
+            print("loop detected", direction, MotionPlanner.count)
+            removeDistance = np.linalg.norm(path[-1]-path[-2])
+            del path[-3:-1]
+            return self.findPathRecursive(path[-1], B, path, direction*-1) - 2*removeDistance  
+            
+        v = B - A
+        d = np.linalg.norm(v)
+        v_hat = v / d
+        stepSize = d if d < MotionPlanner.VEHICLE_SIZE else MotionPlanner.VEHICLE_SIZE
+        pos = A + v_hat * stepSize
+
+        if self.checkPositionCollision(pos):
+            cwPos = self.findEscapeAngle(A, v_hat, direction)
+            if cwPos is not None:
+                stepSize = np.linalg.norm(cwPos - A)
+                path.append(cwPos)
+                return self.findPathRecursive(cwPos, B, path, direction) + stepSize
+            else:
+                print("No solution, aborting")
+                return 0
+
+        path.append(pos)
+        totalDistance = self.findPathRecursive(pos, B, path, direction) + stepSize
+        
+        return totalDistance
 
     def rotationMatrix(deg):
         theta = np.radians(deg)
         c, s = np.cos(theta), np.sin(theta)
         return np.array(((c, -s), (s, c)))
 
-    def findEscapeAngle(self, pos, heading):
+    def findEscapeAngle(self, pos, heading, direction = 1):
         STEP_ANGLE_DEG = 10 
-        R = MotionPlanner.rotationMatrix(STEP_ANGLE_DEG)
+        R = MotionPlanner.rotationMatrix(STEP_ANGLE_DEG * direction)
         for i in range(1, int(360/STEP_ANGLE_DEG)):
             heading = np.dot(R, heading)
             newPos = pos + heading * MotionPlanner.VEHICLE_SIZE
@@ -78,7 +120,7 @@ class MotionPlanner:
         return self.collideMap[round(pos[1]), round(pos[0])] == 0           # cv2 pixel is [y, x]
         
     def drawPathOnMap(self, path):
-        temp = path[0]
+        temp = path[0].astype(np.int32)
         out = cv2.cvtColor(self.map, cv2.COLOR_GRAY2BGR)
         lineColor = (205,255,143)
         dotColor = (245,87,66)
@@ -92,16 +134,13 @@ class MotionPlanner:
 
 if __name__=="__main__":
     motionPlanner = MotionPlanner("../Assets/map.png")
-    path = motionPlanner.findPath(np.array([50,50]), np.array([200,200]))
+    # path = motionPlanner.findPath(np.array([50,50]), np.array([400,300]))
+    path = []
+    distance = motionPlanner.findPathRecursive(np.array([50,50]), np.array([400,300]), path, 1)
+    print("distance=", distance)
     motionPlanner.drawPathOnMap(path)
 
 
-    # 300 150 fail
-
-    # rot = MotionPlanner.rotationMatrix(45)
-    # x = np.array([1,0])
-    # x = np.dot(rot, x)
-    # x = np.dot(rot, x)
-    # print(x)
-    # print(np.dot(rot, np.array([1,0])))
-    # print(np.dot(rot, np.dot(rot, np.array([1,0]))))
+    # hard case
+    # 300 150
+    # 400 300
