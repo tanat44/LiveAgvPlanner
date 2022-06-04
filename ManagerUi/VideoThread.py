@@ -17,8 +17,6 @@ class VideoThread(QThread):
         while self.running:
             # canvas = np.zeros((500, 500, 3), dtype="uint8")
             canvas = cv2.imread(mapFile)
-            red = (0, 0, 255)
-            cv2.line(canvas, (300, 0), (0, 300), red, 3)
             self.change_pixmap_signal.emit(canvas)
             while not self.playing:
                 time.sleep(0.5)

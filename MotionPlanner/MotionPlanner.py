@@ -130,6 +130,7 @@ class MotionPlanner:
             cv2.circle(out, pos, 3, dotColor, -1)
             temp = pos
         cv2.imwrite("out.png", out) 
+        return out
 
 
 if __name__=="__main__":
