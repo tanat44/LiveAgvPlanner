@@ -2,7 +2,8 @@ from math import cos, sin
 import numpy as np
 import cv2
 import sys
-
+import copy
+sys.setrecursionlimit(10000)
 class MotionPlanner:
     VEHICLE_SIZE = 30
 
@@ -63,20 +64,18 @@ class MotionPlanner:
 
     count = 0
     def findPathRecursive(self, A, B, path, direction = 1):   
-        MotionPlanner.count += 1     
+        # MotionPlanner.count += 1     
 
-        if MotionPlanner.count == 50:
-            print("MAX stack reached")
-            return 0
+        # if MotionPlanner.count == 50:
+        #     print("MAX stack reached")
+        #     return float('inf')
 
         if np.linalg.norm(B-A) < 1:
             return 0 # total distance
 
         if len(path) > 3 and np.linalg.norm(path[-3]-A) < 1:     # running into loop
-            print("loop detected", direction, MotionPlanner.count)
-            removeDistance = np.linalg.norm(path[-1]-path[-2])
-            del path[-3:-1]
-            return self.findPathRecursive(path[-1], B, path, direction*-1) - 2*removeDistance  
+            print("loop detected")
+            return float('inf') 
             
         v = B - A
         d = np.linalg.norm(v)
@@ -85,14 +84,42 @@ class MotionPlanner:
         pos = A + v_hat * stepSize
 
         if self.checkPositionCollision(pos):
-            cwPos = self.findEscapeAngle(A, v_hat, direction)
-            if cwPos is not None:
-                stepSize = np.linalg.norm(cwPos - A)
-                path.append(cwPos)
-                return self.findPathRecursive(cwPos, B, path, direction) + stepSize
+            v0 = path[-1] - path[-2]
+            v0_hat = v0 / np.linalg.norm(v0)
+
+            DOT_THRES = -0.98
+
+            pos1 = self.findEscapeAngle(A, v_hat, direction)
+            distance1 = float('inf')
+            path1 = []
+            v1 = pos1 - A
+            v1_hat = v1 / np.linalg.norm(v1)
+            if np.dot(v0_hat, v1_hat) > DOT_THRES:
+                path1 = copy.deepcopy(path)
+                stepSize = np.linalg.norm(v1)
+                path1.append(pos1)
+                distance1 = self.findPathRecursive(pos1, B, path1, direction) + stepSize
+
+            pos2 = self.findEscapeAngle(A, v_hat, direction*-1)
+            distance2 = float('inf')
+            path2 = []
+            v2 = pos2 - A
+            v2_hat = v2 / np.linalg.norm(v2)
+            if np.dot(v0_hat, v2_hat) > DOT_THRES:
+                path2 = copy.deepcopy(path)
+                stepSize = np.linalg.norm(v2)
+                path2.append(pos2)
+                distance2 = self.findPathRecursive(pos2, B, path2, direction) + stepSize
+
+            del path[:]
+            if distance1 < distance2:
+                for x in path1:
+                    path.append(x)
+                return distance1
             else:
-                print("No solution, aborting")
-                return 0
+                for x in path2:
+                    path.append(x)
+                return distance2
 
         path.append(pos)
         totalDistance = self.findPathRecursive(pos, B, path, direction) + stepSize
@@ -156,7 +183,6 @@ class MotionPlanner:
         return path
 
     def pathSmoothing(self, path):
-
         startIdx = 0
         while startIdx < len(path)-1:
             path = self.pairWiseSmoothing(path, startIdx)
@@ -169,12 +195,15 @@ class MotionPlanner:
 if __name__=="__main__":
     motionPlanner = MotionPlanner("../Assets/map.png")
 
+    A = np.array([50,50])
+    B = np.array([400,300])
+
     # path = motionPlanner.findPath(np.array([50,50]), np.array([400,300]))
     # path2 = motionPlanner.pathSmoothing(path)
     # motionPlanner.drawPathOnMap(path2)
 
-    path = []
-    distance = motionPlanner.findPathRecursive(np.array([50,50]), np.array([400,300]), path, 1)
+    path = [A]
+    distance = motionPlanner.findPathRecursive(A, B, path, 1)
     print("distance", distance)
     # path = motionPlanner.pathSmoothing(path)
     motionPlanner.drawPathOnMap(path)

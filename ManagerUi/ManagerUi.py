@@ -61,7 +61,10 @@ class ManagerUi(QWidget):
         
         if len(self.targetRoute) == 2:
             print("execute planner", self.targetRoute)
-            path = self.motionPlanner.findPath(self.targetRoute[0], self.targetRoute[1])
+            # path = self.motionPlanner.findPath(self.targetRoute[0], self.targetRoute[1])
+            # path = self.motionPlanner.pathSmoothing(path)
+            path = [self.targetRoute[0]]
+            self.motionPlanner.findPathRecursive(self.targetRoute[0], self.targetRoute[1], path)
             path = self.motionPlanner.pathSmoothing(path)
             cvimg = self.motionPlanner.drawPathOnMap(path)
             self.update_image(cvimg)
