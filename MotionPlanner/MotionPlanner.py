@@ -62,7 +62,6 @@ class MotionPlanner:
         return path
 
     count = 0
-
     def findPathRecursive(self, A, B, path, direction = 1):   
         MotionPlanner.count += 1     
 
@@ -132,15 +131,53 @@ class MotionPlanner:
         cv2.imwrite("out.png", out) 
         return out
 
+    def checkLineCollision(self, A, B):
+        v = B-A
+        d = np.linalg.norm(v)
+        v_hat = v / d
+        STEP = MotionPlanner.VEHICLE_SIZE / 4.0
+        for i in range(0, int(d / STEP )):
+            pos = A + v_hat*i*STEP
+            if self.checkPositionCollision(pos):
+                return True
+        return False
+    
+    def pairWiseSmoothing(self, path, startIdx=0):
+        for i in range(startIdx, len(path)):
+            X = path[i]
+            YIdx = i+1
+            for j in range(i+1, len(path)):
+                Y = path[j]
+                if self.checkLineCollision(X, Y):
+                    continue
+                YIdx = j
+            if YIdx > i+1:
+                return path[:i+1] + path[YIdx:]
+        return path
+
+    def pathSmoothing(self, path):
+
+        startIdx = 0
+        while startIdx < len(path)-1:
+            path = self.pairWiseSmoothing(path, startIdx)
+            startIdx += 1
+
+        return path
+
+
 
 if __name__=="__main__":
     motionPlanner = MotionPlanner("../Assets/map.png")
+
     # path = motionPlanner.findPath(np.array([50,50]), np.array([400,300]))
+    # path2 = motionPlanner.pathSmoothing(path)
+    # motionPlanner.drawPathOnMap(path2)
+
     path = []
     distance = motionPlanner.findPathRecursive(np.array([50,50]), np.array([400,300]), path, 1)
-    print("distance=", distance)
+    print("distance", distance)
+    # path = motionPlanner.pathSmoothing(path)
     motionPlanner.drawPathOnMap(path)
-
 
     # hard case
     # 300 150
