@@ -6,16 +6,19 @@ import cv2
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 import numpy as np
 from ManagerUi.VideoThread import VideoThread
+from Agv.Agv import Agv
 
 class ManagerUi(QWidget):
-    def __init__(self, motionPlanner):
+    def __init__(self, motionPlanner, onClose = None, USE_RMQ = False):
         super().__init__()
         self.setWindowTitle("Live AGV Planner")
         self.setFixedSize(1000,800)
+        self.onClose = onClose
 
         # OBJECTS
         self.motionPlanner = motionPlanner
         self.targetRoute = []
+        self.agv = Agv(USE_RMQ)
 
         # VIDEO DISPLAY
         self.imageLabel = QLabel(self)
@@ -38,6 +41,9 @@ class ManagerUi(QWidget):
 
         self.setLayout(mainLayout)
 
+    def onRabbitMessage(self, msg):
+        data = eval(msg)
+        self.videoThread.vehiclePos = np.array(data['pos'])
 
     def closeEvent(self, event):
         event.accept()
@@ -61,17 +67,24 @@ class ManagerUi(QWidget):
         
         if len(self.targetRoute) == 2:
             print("execute planner", self.targetRoute)
-            # path = self.motionPlanner.findPath(self.targetRoute[0], self.targetRoute[1])
-            # path = self.motionPlanner.pathSmoothing(path)
-            path = [self.targetRoute[0]]
-            self.motionPlanner.findPathRecursive(self.targetRoute[0], self.targetRoute[1], path)
-            path = self.motionPlanner.pathSmoothing(path)
+            path = self.motionPlanner.findPath(self.targetRoute[0], self.targetRoute[1])
             cvimg = self.motionPlanner.drawPathOnMap(path)
-            self.update_image(cvimg)
+            self.videoThread.cvimg = cvimg
+            
+            # update AGV
+            self.agv.target = self.targetRoute[1]
+            self.agv.pos = self.targetRoute[0]
+
             self.targetRoute = []
+            
 
     # SLOT
     @pyqtSlot(np.ndarray)
     def update_image(self, cv_img):
         qt_img = self.convert_cv_qt(cv_img)
         self.imageLabel.setPixmap(qt_img)
+
+    def closeEvent(self, event):
+        print("UI closing")
+        if self.onClose is not None:
+            self.onClose()
