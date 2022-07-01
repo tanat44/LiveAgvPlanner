@@ -34,14 +34,14 @@ def get_map():
     return map
     
 def heuristic(x, y, xEnd, yEnd, path):
-    return math.dist([x,y], [xEnd, yEnd]) + len(path) * 1
+    return math.dist([x,y], [xEnd, yEnd]) + len(path) * 0.5
 
 def findPath(xStart, yStart, xEnd, yEnd, map):
     candidates = PriorityQueue()
     candidates.put(Candidate(xStart, yStart, "START:", 0))
     candidate = candidates.get()
     while candidate.y != yEnd or candidate.x != xEnd:     
-        for (dx, dy, step_name) in [(-1, 0, "L"), (1, 0, "R"), (0, -1, "D"), (0, 1, "U")]:
+        for (dx, dy, step_name) in [(-3, 0, "L"), (3, 0, "R"), (0, -3, "D"), (0, 3, "U")]:
             if map[str(candidate.x+dx)+","+str(candidate.y+dy)] == 0:
                 candidates.put(Candidate(candidate.x+dx, candidate.y+dy, candidate.path+step_name, heuristic(candidate.x+dx, candidate.y+dy, xEnd, yEnd, candidate.path)))
         candidate = candidates.get()
