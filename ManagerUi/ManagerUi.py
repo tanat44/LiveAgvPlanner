@@ -1,5 +1,6 @@
+from time import time
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QWidget, QApplication, QLabel, QVBoxLayout, QGridLayout, QTabWidget
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QLabel, QVBoxLayout
 from PyQt5.QtGui import QPixmap
 import sys
 import cv2
@@ -67,7 +68,9 @@ class ManagerUi(QWidget):
         
         if len(self.targetRoute) == 2:
             print("execute planner", self.targetRoute)
+            start = time()
             path = self.motionPlanner.findPath(self.targetRoute[0], self.targetRoute[1])
+            print(time()-start)
             cvimg = self.motionPlanner.drawPathOnMap(path)
             self.videoThread.cvimg = cvimg
             

@@ -22,7 +22,6 @@ class MotionPlannerP(MotionPlannerBase):
     STEP_SIZE = 3
 
     def heuristic(self, pos, target, commands):
-        print((len(commands) * 1))
         return np.linalg.norm(target-pos) + (len(commands) * 1)
     
     def pairWiseSmoothing(self, path, startIdx=0):
@@ -63,8 +62,6 @@ class MotionPlannerP(MotionPlannerBase):
         candidates = PriorityQueue()
         candidates.put(Candidate(A, [], "START:", 0))
         candidate = candidates.get()
-
-        steps = 0
 
         while np.linalg.norm(B-candidate.pos) > MotionPlannerP.STEP_SIZE:
             for (dx, dy, step_name) in [(-MotionPlannerP.STEP_SIZE, 0, "L"), (MotionPlannerP.STEP_SIZE, 0, "R"), (0, -MotionPlannerP.STEP_SIZE, "D"), (0, MotionPlannerP.STEP_SIZE, "U")]:

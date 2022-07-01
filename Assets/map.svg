@@ -24,8 +24,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.73406285"
-     inkscape:cx="364.41021"
-     inkscape:cy="412.09005"
+     inkscape:cx="316.73037"
+     inkscape:cy="522.43483"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -45,7 +45,7 @@
        height="132.29167"
        x="29.195387"
        y="78.214806"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -55,7 +55,7 @@
        height="132.29167"
        x="29.195387"
        y="78.214806"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -65,27 +65,27 @@
        height="82.388168"
        x="61.274273"
        y="102.15551"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
-       style="fill:#ffaaaa;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-dasharray:1.05833, 8.46664;stroke-opacity:1"
+       style="fill:#ffaaaa;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-dasharray:1.05833, 8.46665;stroke-opacity:1"
        id="rect1452"
        width="7.5691752"
-       height="82.388168"
+       height="104.01438"
        x="121.1068"
-       y="104.31813"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       y="104.31812"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
        style="fill:#ffaaaa;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-dasharray:1.05833, 8.46662;stroke-opacity:1"
        id="rect1454"
-       width="32.122238"
+       width="60.236317"
        height="15.707343"
        x="68.843445"
        y="102.15551"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -95,7 +95,7 @@
        height="15.707343"
        x="93.713593"
        y="128.82784"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -105,7 +105,7 @@
        height="15.707343"
        x="61.274273"
        y="168.83633"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -115,7 +115,7 @@
        height="132.29167"
        x="153.91789"
        y="78.214806"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -125,7 +125,7 @@
        height="7.7081404"
        x="29.195395"
        y="202.79834"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
     <rect
@@ -135,7 +135,7 @@
        height="7.7081404"
        x="30.288046"
        y="78.214806"
-       inkscape:export-filename="C:\Users\tanut\Desktop\LivePlanner\map.png"
+       inkscape:export-filename="C:\Tanut\Code\LiveAgvPlanner\Assets\map.png"
        inkscape:export-xdpi="95.238091"
        inkscape:export-ydpi="95.238091" />
   </g>
